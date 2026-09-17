@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Insights</title>
+    <link rel="stylesheet" href="../css/analysis.css">
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+    
+    <header class="navbar">
+        <button class="back-btn" onclick="localStorage.removeItem('analysisState');window.location.href='plot.html'">
+            <span class="icon">
+                <span class="arrow">←</span>
+            </span>
+            <span class="text">Back</span>
+        </button>
+        <nav>
+            <a href="settings.html" class="nav-link">Settings</a>
+            <a href="help.html" class="nav-link">Help</a>
+        </nav>
+    </header> 
+
+    <nav class="breadcrumb-container" aria-label="Progress">
+        <ol class="breadcrumbs">
+            <li class="breadcrumb-item completed">
+                <a href="userInput.html">
+                    <span class="step-num">1</span> Fill Inputs
+                </a>
+            </li>
+            <li class="breadcrumb-separator1">></li>
+            <li class="breadcrumb-item completed">
+                <a href="plot.html">
+                    <span class="step-num">2</span> Spatial Mapping
+                </a>
+            </li>
+            <li class="breadcrumb-separator">></li>
+            <li class="breadcrumb-item active">
+                <span class="step-num">3</span> Analysis Insights
+            </li>
+        </ol>
+    </nav>
+
+    <div class="container">
+        <div class="plots">
+            <div class="plot-container">
+                <svg id="finalPlot"></svg>
+            </div>
+        </div>
+      
+        <div class="analysis-column">
+        <div class="analysis-panel" aria-label="Analysis Insights">
+            <span class="toolbar-title">Toolbar</span>
+            <!-- Section 1 -->
+            <div class="analysis-section">
+                <button type="button" class="toggle" aria-expanded="false">
+                    <span class="toggle-title">
+                        <svg class="icon-toolbar"xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24" 
+                            fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="7"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        Overview of changes
+                    </span>
+                    <svg class="toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="content" id="generalInfo"></div>
+            </div>
+        
+            <!-- Section 2 -->
+            <div class="analysis-section">
+                <button type="button" class="toggle" aria-expanded="false">
+                    <span class="toggle-title">
+                        <svg class="section-icon"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="7" cy="12" r="3"></circle>
+                            <circle cx="17" cy="12" r="3"></circle>
+                            <line x1="10" y1="12" x2="14" y2="12"></line>
+                        </svg>
+                        Emerging relationships
+                    </span>
+                    <svg class="toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="content" id="clusterInfo">
+                    <label class="switch-container">
+                        <input type="checkbox" id="showRepresentatives">
+                        <span class="repr">
+                            Show representative concepts
+                        </span>
+                        <span class="info-icon" aria-label="Information">
+                            ?
+                            <span class="tooltip-text">
+                                Highlights the word that best represents the main idea of each group.
+                                It helps you notice the concepts that connect the words you placed together.
+                            </span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+        
+            <!-- Section 3 -->
+            <div class="analysis-section">
+                <button  class="toggle" aria-expanded="false">
+                    <span class="toggle-title">
+                        <svg class="section-icon"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M4 7h14l3 5-3 5H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
+                            <circle cx="6" cy="12" r="1"></circle>
+                        </svg>
+                        Cluster labels
+                    </span>
+                    <svg class="toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="content" id="clusterLabels"></div>
+            </div>          
+        </div>
+        <button id="startNew" onclick="
+        localStorage.removeItem('plotState');
+        localStorage.removeItem('newComputation');
+        localStorage.removeItem('context');
+        localStorage.removeItem('keywords'); 
+        localStorage.setItem('sessionReset','true');window.location.href='userInput.html'">Restart</button>
+    
+        </div>
+
+       
+
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="../js/plotStateManager.js"></script>
+    <script src="../js/analysis.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/general.js"></script>
+    <script src="../js/settings.js"></script>
+
+    <script>
+       document.querySelectorAll(".toggle").forEach(button => {
+            button.addEventListener("click", () => {
+                const content = button.nextElementSibling;
+                if(content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        });
+    </script>
+   
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Space - Guide</title>
+    <link rel="stylesheet" href="../css/prep.css">
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <button class="back-btn" onclick="window.location.href='../index.html'">
+            <span class="icon">
+                <span class="arrow">←</span>
+            </span>
+            <span class="text">Back</span>
+        </button>
+        <nav>
+            <!-- <a href="../index.html" class="nav-link">Home</a>  -->
+            <a href="settings.html" class="nav-link">Settings</a>
+            <a href="help.html" class="nav-link">Help</a>
+        </nav>
+    </header>
+
+    <div class="guide-container">
+
+        <div class="header-area">
+            <h1 class="title">What will you do?</h1>
+            <p class="subtitle">Click either the nodes down below or the button at the bottom to find it out!</p>
+        </div>
+       
+        <div class="timeline-path-wrapper">
+            <div class="timeline-base-line"></div>
+            <div class="progress-tracker" id="trackerLine"></div>
+            <div class="timeline-nodes">
+
+                <div class="step-node active" data-index="0">
+                    <div class="dot">1</div>
+                    <div class="card">
+                        <h3>Fill inputs</h3>
+                        <p>Complete a sentence stem with your own ideas (maximum <b>12 words</b> comma-space separated).</p>
+                    </div>
+                </div>
+
+                <div class="step-node" data-index="1">
+                    <div class="dot">2</div>
+                    <div class="card">
+                        <h3>Start processing</h3>
+                        <p>Click the button below the textfields to start the semantic elaboration.</p>
+                    </div>
+                </div>
+
+                <div class="step-node" data-index="2">
+                    <div class="dot">3</div>
+                    <div class="card">
+                        <h3>Move word labels</h3>
+                        <p>Explore the semantic space and drag labels to reorganise them.</p>
+                    </div>
+                </div>
+
+                <div class="step-node" data-index="3">
+                    <div class="dot">4</div>
+                    <div class="card">
+                        <h3>Create clusters</h3>
+                        <p>Group similar concepts by drawing a free-hand border around them.</p>
+                    </div>
+                </div>
+
+                <div class="step-node" data-index="4">
+                    <div class="dot">5</div>
+                    <div class="card">
+                        <h3>View analysis</h3>
+                        <p>After interacting with the plot, view insights elaborated by the system.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="button-container">
+        <button class="continue-btn" id="nextStepBtn">Go to the next step</button>
+        </div>
+    </div>
+<!-- 
+    <button class="ui-btn circle-btn bottom-right" onclick="openHelp()">?</button> -->
+
+    <script src="../js/theme.js"></script>
+    <script src="../js/general.js"></script>
+    <script src="../js/settings.js"></script>
+    <script src="../js/session.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const steps = document.querySelectorAll(".step-node");
+            const tracker = document.getElementById("trackerLine");
+            const actionBtn = document.getElementById("nextStepBtn");
+            let currentUnlocked = 0;
+
+            function renderState(targetIndex) {
+                currentUnlocked = targetIndex;
+
+                steps.forEach((step, i) => {
+                    if (i <= currentUnlocked) {
+                        step.classList.add("active");
+                    } else {
+                        step.classList.remove("active");
+                    }
+                });
+
+                const percentage = (currentUnlocked / (steps.length - 1)) * 100;
+                tracker.style.width = `${percentage}%`;
+
+                if (currentUnlocked === steps.length - 1) {
+                    actionBtn.textContent = "Start with the experience";
+                } else {
+                    actionBtn.textContent = "Go to the next step";
+                }
+            }
+
+            steps.forEach((step, i) => {
+                step.addEventListener("click", () => {
+                    renderState(i);
+                });
+            });
+
+            actionBtn.addEventListener("click", () => {
+                if (currentUnlocked < steps.length - 1) {
+                    renderState(currentUnlocked + 1);
+                } else {
+                    window.location.href="../html/userInput.html";
+                }
+            });
+
+            renderState(0);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-family);
+  
+}
+
+body {
+    background-color: var(--background-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    position: relative;
+    overflow: hidden;
+}
+
+.navbar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 2.5rem 1rem 1rem 1rem;
+    z-index: 10;
+}
+
+.navbar nav {
+    display: flex;
+    gap: 9rem;
+    padding-top: 12px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #000000;
+    font-weight: 600;
+    font-size: 20px;
+    transition: opacity 0.2s ease;
+}
+
+.nav-link:hover {
+    opacity: 0.7; 
+    color: var(--accent-color); 
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    max-width: 1400px;
+    flex-direction: row-reverse;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 5%;
+    align-items: center;
+    position: relative;
+}
+
+.content-left {
+    flex: 1;
+    max-width: 600px;
+    margin-right: -150px;
+    z-index: 2;
+    padding-bottom: 4rem; 
+}
+
+.title {
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+.brand-blue {
+    color: var(--accent-color);
+}
+
+.brand-black {
+    color: #000000;
+}
+
+.subtitle {
+    color: #737373;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    max-width: 500px;
+    margin-top: 10px;
+}
+
+.btn-start {
+    display: inline-block;
+    background-color: var(--accent-color);
+    color: #ffffff;
+    text-decoration: none;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    border: 1px solid var(--accent-color);
+    font-weight: 600;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(0, 74, 173, 0.2);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-start:hover {
+    background-color: #f5f7ff;
+    border: 2px solid var(--accent-color) ;
+    transform: translateY(-2px);
+    color: var(--accent-color);
+}
+
+.content-right {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 55%;
+    height: 90%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    pointer-events: none; 
+    overflow: visible;
+}
+
+.network-img1 {
+    scale: 0.4;
+    
+    margin-bottom: 10px;
+    object-position: left bottom;   
+}
+

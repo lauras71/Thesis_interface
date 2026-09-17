@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fill Inputs</title>
+    <link rel="stylesheet" href="../css/input.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>    
+<body>    
+
+    <!-- HEADER -->
+    <header class="navbar">
+        <button id="backBtn" class="back-btn" onclick="
+            localStorage.setItem('sessionReset','true');
+            localStorage.removeItem('context');
+            localStorage.removeItem('keywords'); 
+            localStorage.setItem('sessionReset','true'); 
+            window.location.href='prepExperience.html'">
+            <span class="icon">
+              <span class="arrow">←</span>
+            </span>
+            <span class="text">Back</span>
+        </button> 
+
+        <nav id="navigation">
+            
+            <a href="settings.html" class="nav-link">Settings</a>
+            <a href="help.html" class="nav-link">Help</a>
+        </nav>
+    </header>
+
+    <!-- LOCAL NAVBAR -->
+    <nav class="breadcrumb-container" aria-label="Progress">
+        <ol class="breadcrumbs">
+            <li class="breadcrumb-item active">
+                <span class="step-num">1</span> Fill Inputs
+            </li>
+        </ol>
+    </nav>   
+ 
+    <!-- TEXTFIELDS -->
+    <main class="form-container" id="formContainer">
+    
+        <div class="input-group" id="groupA">
+            <label for="contextInput" class="input-label" id="labelA">Stem</label>
+            <textarea id="contextInput" class="custom-input"></textarea>
+            <div id="context-error" class="error-message"></div>
+        </div>
+
+        <div class="input-group" id="groupB">
+            <label for="keywordInput" class="input-label">Your response</label>
+            <textarea id="keywordInput" class="custom-input" placeholder="maximum 12 words, comma-space separated"></textarea>
+            <div id ="belowKeywords">
+                <div id="keywords-error" class="error-message"></div>
+                <div class="word-counter" id="wordCounter">0 words</div>
+            </div>
+        </div>
+
+        <button class="submit-btn" id="submitBtn">Submit your response</button>
+
+    </main>
+
+    <script src="../js/theme.js"></script>
+    <script src="../js/general.js"></script>
+    <script src="../js/settings.js"></script>
+    <script src="../js/session.js"></script>
+    <script src="../script.js"></script>
+
+    <script>
+
+        const submitBtn = document.getElementById('submitBtn');
+        const contextInput = document.getElementById('contextInput');
+        const keywordInput = document.getElementById('keywordInput');
+        const formContainer = document.getElementById('formContainer');
+        //const navigation = document.getElementById('navigation');
+        const contextError = document.getElementById("context-error");
+        const keywordsError = document.getElementById("keywords-error");
+        const labelA = document.getElementById('labelA');
+        const groupB = document.getElementById('groupB');
+        const helpBtn = document.getElementById('helpBtn');
+        const contextText = contextInput.value.trim();
+        const keywordsText = keywordInput.value.trim();
+        const wordCounter = document.getElementById("wordCounter");
+        const MAX_WORDS = 12;
+
+        keywordInput.addEventListener("input", () => {
+
+            // comma-space separated keywords
+            let words = keywordInput.value
+                .split(",")
+                .map(w => w.trim())
+                .filter(w => w.length > 0)
+            ;
+
+            // prevent more than 12 keywords
+            if (words.length > MAX_WORDS) {
+                words = words.slice(0, MAX_WORDS);
+                keywordInput.value = words.join(", ");
+            }
+
+            // counter for keywords
+            const count = words.length;
+            wordCounter.textContent =
+                `${count} ${count === 1 ? "word" : "words"}`
+            ;
+        });
+
+        // validating inputs
+        function validateInput() {
+            const contextText = contextInput.value.trim();
+            const keywordsText = keywordInput.value.trim();
+
+            contextError.textContent = "";
+            keywordsError.textContent = "";
+
+            contextInput.classList.remove("error-border");
+            keywordInput.classList.remove("error-border");
+
+            let valid = true;
+
+            if (contextText === "") {
+                contextError.textContent = "Insert a sentence stem";
+                contextInput.classList.add("error-border");
+                valid = false;
+            }
+
+            if (keywordsText === "") {
+                keywordsError.textContent = "Insert between 2 and 12 words";
+                keywordInput.classList.add("error-border");
+                valid = false;
+            }
+
+            if (keywordsText !== "") {
+                const singleWord = keywordsText
+                .split(",")
+                .map(s => s.trim())
+                .filter(s => s.length > 0);
+
+                if (singleWord.length < 2) {
+                keywordsError.textContent = "Insert a minimum of 2 words";
+                keywordInput.classList.add("error-border");
+                valid = false;
+                }
+
+                if (singleWord.length > 12) {
+                keywordsError.textContent = "Insert a maximum of 12 words";
+                keywordInput.classList.add("error-border");
+                valid = false;
+                }
+            }
+
+            return valid;
+        }
+
+        submitBtn.addEventListener("click", () => {
+            if (!validateInput()) return;
+
+            const context = contextInput.value.trim();
+            const keywords = keywordInput.value.trim();
+            const inputRect = contextInput.getBoundingClientRect();
+            const flyingText = document.createElement("div");
+            flyingText.className = "flying-text-node";
+            flyingText.textContent = context;
+            flyingText.style.top = `${inputRect.top + 20}px`;
+            flyingText.style.left = `${inputRect.left + 24}px`;
+            flyingText.style.width = `${inputRect.width - 48}px`;
+
+            document.body.appendChild(flyingText);
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                contextInput.classList.add("hide-completely");
+                labelA.classList.add("hide-completely");
+                //navigation.classList.add("hide-completely");
+
+                groupB.classList.add("fade-out");
+                submitBtn.classList.add("fade-out");
+
+                flyingText.style.top = "360px"; /*50*/
+                flyingText.style.left = "17.9%"; /*50*/
+                flyingText.style.transform = "translateX(-65%)";  /*-50*/
+                flyingText.style.width = "450px"; /*1300*/
+                flyingText.style.fontSize = "1.5rem";
+                flyingText.style.textAlign = "justify";
+                flyingText.style.color = "gray";
+                });
+            });
+
+            flyingText.addEventListener("transitionend", async () => {
+
+                localStorage.setItem("context", context);
+                localStorage.setItem("keywords", keywords);
+                localStorage.setItem("newComputation", "true");
+                localStorage.setItem("wordCounter", wordCounter.textContent);
+                //localStorage.setItem("plotLoading", "true");
+
+                window.location.href = "plot.html";
+            
+                
+
+            }, { once: true });
+        });
+
+        window.addEventListener("DOMContentLoaded", () => {
+            console.log("SESSION RESET FLAG:", localStorage.getItem("sessionReset"));
+            const reset = localStorage.getItem("sessionReset");
+
+            if (reset === "true") {
+                contextInput.value = "";
+                keywordInput.value = "";
+
+                localStorage.removeItem("sessionReset");
+                return;
+            }
+
+            const savedContext = localStorage.getItem("context");
+            const savedKeywords = localStorage.getItem("keywords");
+            const savedCounter = localStorage.getItem("wordCounter");
+
+            console.log("RESTORING:", savedContext, savedKeywords, savedCounter);
+
+            if (savedContext) {
+                contextInput.value = savedContext;
+            }
+
+            if (savedKeywords) {
+                keywordInput.value = savedKeywords;
+            }
+
+            if (savedCounter) {
+            wordCounter.textContent = savedCounter;
+            }
+
+        });
+
+    </script>
+</body>
+</html>

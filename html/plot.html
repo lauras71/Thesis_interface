@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Spatial mapping</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="stylesheet" href="../css/plot.css">
+  <link rel="stylesheet" href="../css/theme.css">
+</head>
+
+<body>
+
+
+    <header class="navbar">
+
+        <button id="backBtn" class="back-btn" onclick="
+            localStorage.removeItem('plotState');
+            localStorage.removeItem('newComputation');
+            window.location.href='userInput.html'" >
+            <span class="icon">
+                <span class="arrow">←</span>
+            </span>
+            <span class="text">Back</span>
+        </button> 
+
+        <nav id="navigation">
+            <!-- <a href="../index.html" class="nav-link" onclick="
+                localStorage.setItem('sessionReset','true');
+                localStorage.removeItem('context');
+                localStorage.removeItem('keywords');
+                localStorage.removeItem('plotData');
+                localStorage.removeItem('plotState');
+                localStorage.removeItem('newComputation');">Home
+            </a>  -->
+            <a href="settings.html" class="nav-link">Settings</a>
+            <a href="help.html" class="nav-link">Help</a>
+        </nav>
+
+    </header>
+
+    <nav class="breadcrumb-container" aria-label="Progress">
+        <ol class="breadcrumbs">
+            <li class="breadcrumb-item completed">
+                <a href="userInput.html">
+                    <span class="step-num">1</span> Fill Inputs
+                </a>
+            </li>
+            <li class="breadcrumb-separator">></li>
+            <li class="breadcrumb-item active">
+                <span class="step-num">2</span> Spatial Mapping
+            </li>
+        </ol>
+    </nav>
+
+    <div class="scene">
+    <!-- context sentence (from input animation) -->
+        <div id="contextText"></div>
+        <div class="plot-wrapper">
+            <div id="loader-container">
+                <div class="loader"></div>
+                <p>Computing embeddings...</p>
+            </div>
+  
+            <svg id="plot"></svg>
+
+            <div class="action-toolbar-vertical" aria-label="Plot Actions">
+                <span class="toolbar-title">Toolbar</span>
+                <div class="toolbar-actions-grid">
+                    <button type="button" class="toolbar-btn" id="undo-btn" title="Undo Last Mapping Step">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+                        Undo action
+                    </button>
+                    
+                    <hr class="toolbar-separator-horizontal" />
+                    
+                    <button type="button" class="toolbar-btn" id="restore-btn" title="Restore to Original Mapping">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                        Restore  mapping
+                    </button>
+                </div>
+            </div>
+  
+            <!-- <button id="undo-btn" title="Undo">↶</button>
+            <button id="restore-btn">Reset to original mapping</button>  -->
+            <button id="elaborate-btn">Save and confirm</button>
+   
+        </div>
+    </div>
+  
+    <div id="cluster-menu">
+        <button id="close-menu">✕</button>
+        <p id="text-message">Elimina cluster</p>
+        <div id="buttons">
+            <button id="delete-cluster">Si</button>
+            <button id="not-delete-cluster">No</button>
+        </div>
+    </div>
+
+
+
+    <div class="hub-container hidden">
+        <div class="hub-card">
+            <button class="close-btn" aria-label="Close">&times;</button>
+            <h1>You are almost at the end!</h1>
+            <p>
+            Your workspace mapping is complete. You are now ready to explore
+            further insights, give labels to clusters, and review the deep
+            emerging semantic relationships.
+            </p>
+            <button class="action-btn" onclick="window.location.href='analysis.html'">View analysis →</button>
+        </div>
+
+    </div>
+
+    <script src="../js/theme.js"></script>
+    <script src="../js/general.js"></script>
+    <script src="../js/settings.js"></script>
+    <script src="../js/session.js"></script>
+
+    <script src="../js/plotStateManager.js"></script>
+    <script src="../script.js"></script>
+    <script>
+
+    document.getElementById("undo-btn").addEventListener("click", undo);
+
+    document.getElementById("elaborate-btn").addEventListener("click", () => {
+        persistState();
+        console.log("STATE BEFORE LEAVING",JSON.parse(localStorage.getItem("plotState")));
+        document.querySelector(".hub-container").classList.remove("hidden");
+    });
+
+    /* document.getElementById("elaborate-btn")
+    .addEventListener("click", goTo);
+    */
+
+    document.getElementById("restore-btn").addEventListener("click", restoreView);    
+
+    document.querySelector(".close-btn").addEventListener("click", () => {
+        document.querySelector(".hub-container").classList.add("hidden");
+    });
+
+    const context = localStorage.getItem("context");
+    document.getElementById("contextText").textContent = context;
+    const svgPlot = d3.select("#plot");
+    const loader = document.getElementById("loader-container");
+    let activeState;
+
+    async function computeEmbeddings() {
+        const context = localStorage.getItem("context");
+        const keywords = localStorage.getItem("keywords");
+
+        const res = await fetch("http://127.0.0.1:8000/data", {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                context,
+                keywords
+            })
+        });
+
+        const data = await res.json();
+        return data;
+    }
+
+    async function initPlot() {
+        const newComputation = localStorage.getItem("newComputation") === "true";
+        const savedState = plotStateManager.load();
+
+        console.log("LOADED STATE:", savedState);
+        console.log("LOADED UNDO:",savedState?.undoStack);
+
+        /*
+            CASE 1:
+            NEW INPUT FROM USER
+        */
+        if(newComputation) {
+            console.log("NEW COMPUTATION");
+            localStorage.removeItem("newComputation");
+            // show loader immediately
+            loader.style.display = "flex";
+            svgPlot.style("display","none");
+            data = await computeEmbeddings();
+            activeState = {
+                data:data,
+                clusters:[]
+            };
+            drawPlot(activeState.data);
+
+            loader.style.display="none";
+            svgPlot.style("display","block");
+
+            plotStateManager.save(
+                activeState.data,
+                [],
+                []
+            );
+        }
+
+
+
+        /*
+            CASE 2:
+            RETURNING TO EXISTING PLOT
+        */
+        else if(savedState){
+            console.log("RESTORING SAVED STATE:", savedState);
+            activeState = savedState;
+
+            // restore main data 
+            data = activeState.data;
+            if(savedState.undoStack){
+                undoStack = savedState.undoStack;
+            }
+            if(savedState.clusterId != null){
+                clusterId = savedState.clusterId;
+            }
+            // reset runtime clusters
+            clusters = [];
+            // draw using the restored data
+            drawPlot(data);
+            console.log(
+                "AFTER DRAW RESTORE:",
+                data.map(d => ({
+                    label:d.label,
+                    screenX:d.screenX,
+                    screenY:d.screenY
+                }))
+            );
+            // recreate SVG clusters and runtime cluster objects
+            restoreClusters(
+                activeState.clusters || []
+            ); 
+            // keep activeState synchronized with runtime variables
+            activeState.data = data;
+            activeState.clusters = clusters;
+            loader.style.display="none";
+            svgPlot.style("display","block");
+        }
+    
+        /*
+            CASE 3:
+            SAFETY FALLBACK
+            (first time entering plot without input) 
+            It can be omitted since the validateInput() function
+        */
+        else {
+            console.log("NO STATE FOUND");
+            loader.style.display="flex";
+            svgPlot.style("display","none");
+            data = await computeEmbeddings();
+            activeState={
+                data:data,
+                clusters:[]
+            };
+            drawPlot(activeState.data);
+            loader.style.display="none";
+            svgPlot.style("display","block");
+            plotStateManager.save(
+                activeState.data,
+                []
+            );
+        }
+    }
+
+    initPlot();
+
+    </script>
+</body>
+</html>

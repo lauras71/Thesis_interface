@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elaboration Hub</title>
+    <link rel="stylesheet" href="../css/elaborationHub.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+
+   <header class="navbar">
+        <button class="back-btn" onclick="window.location.href='plot.html'">
+            <span class="icon">
+              <span class="arrow">←</span>
+            </span>
+            <span class="text">Back</span>
+          </button>
+        <nav>
+            <a href="../index.html" class="nav-link" onclick="
+            localStorage.removeItem('plotState');
+            localStorage.removeItem('newComputation');localStorage.removeItem('context');
+            localStorage.removeItem('keywords'); localStorage.setItem('sessionReset','true')">Home</a>
+            <a href="settings.html" class="nav-link">Settings</a>
+            <a href="help.html" class="nav-link">Help</a>
+        </nav>
+    </header>
+
+    <div class="hub-container">
+        <span class="badge">Milestone reached</span>
+        
+        <div class="hub-card">
+            <h1>You are almost at the end!</h1>
+            <p>Your workspace mapping is complete. You are now ready to explore further insights, give labels to clusters, and review the deep emerging semantic relationships.</p>
+            
+            <button class="action-btn" onclick="window.location.href='analysis.html'">
+                View analysis →
+            </button>
+        </div>
+    </div>
+
+
+    <script src="../js/theme.js"></script>
+    <script src="../js/general.js"></script>
+    <script src="../js/settings.js"></script>
+</body>
+</html>

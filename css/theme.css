@@ -1,0 +1,44 @@
+:root {
+
+    /* Backgrounds */
+    --background-color: #f5f7ff;
+    --surface-color: #ffffff;
+  
+    /* Text */
+    --text-color: #222222;
+    --error-color: #D55E00;
+  
+    /* Borders */
+    --border-color: #d8d3cb;
+    /*--label-color: #64748B;*/
+    /* Buttons */
+    --floating-button-color: #D3F255; 
+    --accent-color:#004aad;
+    /* #6C5CE7 */
+    /* Plot */
+    --plot-background-color: #ffffff;
+  
+    /* Labels */
+    --label-fill-color: #ADD8E6;
+    --label-border-color: #000000;
+  
+    /* Grid */
+    --grid-color: #d9d9d9;
+
+    --success-color: #1e7e34;
+  
+    /* Loader */
+    --loader-color: rgba(92, 124, 250, 0.6);
+  
+    /* Cards */
+    --card-background-color: #ffffff;
+
+    /*--contrast: 1; */
+
+    --clusters: #5B8FF9, #61DDAA, #65789B, #F6BD16, #7262FD, #78D3F8;
+  }
+
+  body {
+    font-size: var(--font-size, 18px);
+    filter: contrast(var(--contrast));
+  }

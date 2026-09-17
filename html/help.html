@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Help page</title>
+  <link rel="stylesheet" href="../css/help.css">
+  <link rel="stylesheet" href="../css/theme.css">
+</head>
+
+<body>
+
+  <header class="navbar">
+    <button class="back-btn" onclick="if(document.referrer) { history.back(); } else { window.location.href='../index.html'; }">
+      <span class="icon">
+        <span class="arrow">←</span>
+      </span>
+      <span class="text">Back</span>
+    </button>
+    <nav>
+      <a href="settings.html" class="nav-link">Settings</a>
+      <a href="help.html" class="nav-link">Help</a>
+    </nav>
+  </header> 
+
+  <div class="help-page">
+   
+    <div class="top-bar">
+      <div class="title-block">
+        <h1>Help & Guide</h1>
+        <p>A simple, visual walkthrough of how the system works.</p>
+      </div>
+    </div>
+    
+    <div class="bento-grid">
+      <!-- Card 1: Project Overview -->
+      <div class="setting-card from-left" id="card-overview">
+        <div class="card-badge">Concept</div>
+        <p id="titleCard">Project Overview</p>
+        <p id="overviewText">
+          This interface fosters conceptual alignment through semantic interaction with textual elements.
+        </p>
+      </div>
+    
+      <!-- Card 2: What You Can Do -->
+      <div class="setting-card from-right" id="card-actions">
+        <div class="card-badge">Actions</div>
+        <h2>What You Can Do</h2>
+        <ul class="custom-features-list">
+          <li><span>Insert contextual inputs for processing</span></li>
+          <li><span>Drag-and-drop word labels freely</span></li>
+          <li><span>Create and delete clusters</span></li>
+          <li><span>Explore similarity relationships</span></li>
+        </ul>
+      </div>
+    
+      <!-- Card 3: Video Walkthrough -->
+      <div class="setting-card from-right" id="card-video">
+        <div class="card-header-inline">
+          <h2>Video Walkthrough</h2>
+          <span class="video-indicator">Live Demo</span>
+        </div>
+        <p>Watch a dynamic walkthrough of our interface.</p>
+          
+        <div class="video-frame">
+          <video controls>
+            <source src="../video/tutorial.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    
+    </div> 
+    
+  </div>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/general.js"></script>
+  <script src="../js/settings.js"></script>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const cards = document.querySelectorAll(".setting-card");
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.classList.add("animate");
+        }, index * 180); 
+      });
+    });
+
+ 
+
+  </script>
+</body>
+</html> 
